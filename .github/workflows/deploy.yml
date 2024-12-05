@@ -1,4 +1,4 @@
-name: Deploy to Heroku
+name: Continuous Delivery Simulation with Error
 
 on:
   push:
@@ -11,17 +11,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-      - name: Deploy to Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          git remote add heroku https://git.heroku.com/<APP_NAME>.git
-          git push heroku main -f
 
+      - name: Simulate Build
+        run: |
+          echo "Building the application..."
+          mkdir build
+          echo "Hello, CD!" > build/index.html
+          echo "This is another file" > build/another.html
+
+      - name: Simulate Deployment
+        run: |
+          echo "Deploying to fake server..."
+          mkdir /tmp/fake-server
+          cp -r build/* /tmp/fake-server/
+          echo "Deployment complete. Files are now available in /tmp/fake-server"
+
+      - name: Simulate Post-Deployment Test
+        run: |
+          echo "Running post-deployment tests..."
+          if [ ! -f /tmp/fake-server/missing-file.html ]; then
+            echo "ERROR: Critical file missing in deployment!" >&2
+            exit 1
+          fi
+          echo "All files are present. Deployment successful."
